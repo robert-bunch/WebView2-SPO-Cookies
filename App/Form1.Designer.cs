@@ -167,6 +167,7 @@ namespace WindowsFormsSharePointApp2
             this.pictureBox1.Location = new System.Drawing.Point(15, 285);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(342, 190);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 13;
             this.pictureBox1.TabStop = false;
             // 
@@ -180,7 +181,6 @@ namespace WindowsFormsSharePointApp2
             this.webView21.Name = "webView21";
             this.webView21.Size = new System.Drawing.Size(342, 223);
             this.webView21.TabIndex = 1;
-            this.webView21.Source = new Uri("https://keenovlab.sharepoint.com/sites/TestSite/Shared%20Documents/Forms/AllItems.aspx");
             // 
             // Form1
             // 
