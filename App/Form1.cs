@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Web.WebView2.Core;
 
 namespace WindowsFormsSharePointApp2
 {
@@ -26,33 +27,11 @@ namespace WindowsFormsSharePointApp2
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private async void Form1_Load(object sender, EventArgs e)
         {
-            // Initially navigate to a page that the user will have access to, to grab the FedAuth & rtFa cookies.
-            this.webBrowser1.Navigate(@"https://xx.sharepoint.com/xx/xx/xx/Forms/AllItems.aspx");
-        }
-
-        private void webBrowser1_Navigated(object sender, WebBrowserNavigatedEventArgs e)
-        {
-            try
-            {
-                if (webBrowser1.Url.AbsoluteUri == "about:blank")
-                    return;
-
-                var cookieData = GetWebBrowserCookie.GetCookieInternal(webBrowser1.Url, false);
-
-                if (string.IsNullOrEmpty(cookieData) == false)
-                {
-                    textBoxCookie.Text = cookieData;
-
-                    var dict = ParseCookieData(cookieData);
-                    textBoxFedAuth.Text = dict["FedAuth"];
-                    textBoxrtFa.Text = dict["rtFa"];
-                }
-            }
-            catch (Exception)
-            {
-            }
+            await webView21.EnsureCoreWebView2Async();
+            webView21.NavigationCompleted += webView21_NavigationCompleted;
+            webView21.Source = new Uri("https://keenovlab.sharepoint.com/sites/TestSite/Shared%20Documents/Forms/AllItems.aspx");
         }
 
         private IDictionary<string, string> ParseCookieData(string cookieData)
@@ -89,7 +68,7 @@ namespace WindowsFormsSharePointApp2
         {
             try
             {
-                var url = $"https://xx.sharepoint.com/sites/xx/Images/{textBoxImageName.Text}";
+                var url = $"https://keenovlab.sharepoint.com/sites/TestSite/Images1/horse.jpg";
 
                 var handler = new HttpClientHandler();
                 handler.CookieContainer = new System.Net.CookieContainer();
@@ -122,6 +101,38 @@ namespace WindowsFormsSharePointApp2
                 Image img = Image.FromStream(memstr);
                 return img;
             }
+        }
+
+        private async void webView21_NavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs e)
+        {
+            try
+            {
+                var uri = webView21.Source?.AbsoluteUri;
+                if (string.IsNullOrEmpty(uri) || uri == "about:blank")
+                    return;
+
+                var cookieManager = webView21.CoreWebView2.CookieManager;
+                var cookies = await cookieManager.GetCookiesAsync(uri);
+
+                var cookieData = string.Join("; ", cookies.Select(c => $"{c.Name}={c.Value}"));
+                textBoxCookie.Text = cookieData;
+
+                var dict = ParseCookieData(cookieData);
+                textBoxFedAuth.Text = dict.ContainsKey("FedAuth") ? dict["FedAuth"] : "";
+                textBoxrtFa.Text = dict.ContainsKey("rtFa") ? dict["rtFa"] : "";
+            }
+            catch (Exception)
+            {
+                // Handle exceptions as needed
+            }
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            int rightMargin = 20;
+            textBoxCookie.Left = this.ClientSize.Width - textBoxCookie.Width - rightMargin;
+            textBoxFedAuth.Left = this.ClientSize.Width - textBoxFedAuth.Width - rightMargin;
+            textBoxrtFa.Left = this.ClientSize.Width - textBoxrtFa.Width - rightMargin;
         }
     }
 }
