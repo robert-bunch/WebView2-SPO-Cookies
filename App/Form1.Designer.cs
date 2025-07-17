@@ -126,7 +126,7 @@ namespace WindowsFormsSharePointApp2
             this.textBoxImageName.Name = "textBoxImageName";
             this.textBoxImageName.Size = new System.Drawing.Size(232, 20);
             this.textBoxImageName.TabIndex = 9;
-            this.textBoxImageName.Text = "horse.JPG";
+            this.textBoxImageName.Text = "test.jpg";
             // 
             // label4
             // 
