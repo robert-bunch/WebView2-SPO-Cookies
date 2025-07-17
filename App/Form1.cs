@@ -22,6 +22,9 @@ namespace WindowsFormsSharePointApp2
 
     public partial class Form1 : Form
     {
+        string sharePointSiteUrl = "https://xx.sharepoint.com/sites/TestSite/Shared%20Documents/Forms/AllItems.aspx";
+        string sharePointImageUrl = "https://xx.sharepoint.com/sites/TestSite/Images1/test.jpg";
+
         public Form1()
         {
             InitializeComponent();
@@ -31,7 +34,7 @@ namespace WindowsFormsSharePointApp2
         {
             await webView21.EnsureCoreWebView2Async();
             webView21.NavigationCompleted += webView21_NavigationCompleted;
-            webView21.Source = new Uri("https://keenovlab.sharepoint.com/sites/TestSite/Shared%20Documents/Forms/AllItems.aspx");
+            webView21.Source = new Uri(sharePointSiteUrl);
         }
 
         private IDictionary<string, string> ParseCookieData(string cookieData)
@@ -68,7 +71,7 @@ namespace WindowsFormsSharePointApp2
         {
             try
             {
-                var url = $"https://keenovlab.sharepoint.com/sites/TestSite/Images1/horse.jpg";
+                var url = sharePointImageUrl;
 
                 var handler = new HttpClientHandler();
                 handler.CookieContainer = new System.Net.CookieContainer();
